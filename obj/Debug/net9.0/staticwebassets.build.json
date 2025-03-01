@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ZBb85+4kMWALLbWAQX0xY88yfGbI3MPgW2sxXj5NViU=",
+  "Source": "SimpleRESTApi",
+  "BasePath": "_content/SimpleRESTApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "+SVebZNdVgE=",
+  "success": true,
+  "projectFilePath": "D:\\Elva Kuliah\\Sem 4\\Desain web restfull API\\tugas\\SimpleRESTApi\\SimpleRESTApi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.1\\microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
