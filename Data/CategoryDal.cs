@@ -20,7 +20,8 @@ namespace SimpleRESTApi.Data
                 new Category{CategoryId=1, CategoryName="ASP.NET Web API"},
                 new Category{CategoryId=1, CategoryName="Blazor"},
                 new Category{CategoryId=1, CategoryName="Xamarin"},
-                new Category{CategoryId=1, CategoryName="Azure"}
+                new Category{CategoryId=1, CategoryName="Azure"},
+                new Category{CategoryId=1, CategoryName="Test"}
             };
         }
         public Category AddCategory(Category category)
