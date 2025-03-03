@@ -16,12 +16,11 @@ namespace SimpleRESTApi.Data
             _category=new List<Category>
             {
                 new Category{CategoryId=1, CategoryName="ASP.NET Core"},
-                new Category{CategoryId=1, CategoryName="ASP.NET MVC"},
-                new Category{CategoryId=1, CategoryName="ASP.NET Web API"},
-                new Category{CategoryId=1, CategoryName="Blazor"},
-                new Category{CategoryId=1, CategoryName="Xamarin"},
-                new Category{CategoryId=1, CategoryName="Azure"},
-                new Category{CategoryId=1, CategoryName="Test"}
+                new Category{CategoryId=2, CategoryName="ASP.NET MVC"},
+                new Category{CategoryId=3, CategoryName="ASP.NET Web API"},
+                new Category{CategoryId=4, CategoryName="Blazor"},
+                new Category{CategoryId=5, CategoryName="Xamarin"},
+                new Category{CategoryId=6, CategoryName="Azure"}
             };
         }
         public Category AddCategory(Category category)
