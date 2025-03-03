@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 //Dependency injection 
-builder.Services.AddSingleton<ICategory, CategoryDal>();
+builder.Services.AddSingleton<Icategory, CategoryDal>();
 builder.Services.AddSingleton<IInstructor, InstructorDal>();
 
 var app = builder.Build();
@@ -55,7 +55,7 @@ app.MapGet("/weatherforecast", () =>
 //     return $"Luas segitiga dengan alas = {alas} dan tinggi = {tinggi} adalah {luas}";
 // });
 
-app.MapGet("api/v1/categories", (ICategory categoryData) =>
+app.MapGet("api/v1/categories", (Icategory categoryData) =>
 {
     var categories = categoryData.GetCategories();
     return categories;
@@ -65,25 +65,25 @@ app.MapGet("api/v1/categories", (ICategory categoryData) =>
     // return category;
 });
 
-app.MapGet("api/v1/categories/{id}", (ICategory categoryData, int id) =>
+app.MapGet("api/v1/categories/{id}", (Icategory categoryData, int id) =>
 {
     var category = categoryData.GetCategoryById(id);
     return category;
 });
 
-app.MapPost("api/v1/categories", (ICategory categoryData, Category category) =>
+app.MapPost("api/v1/categories", (Icategory categoryData, Category category) =>
 {
     var newCategory = categoryData.AddCategory(category);
     return newCategory;
 });
 
-app.MapPut("api/v1/categories", (ICategory categoryData, Category category) =>
+app.MapPut("api/v1/categories", (Icategory categoryData, Category category) =>
 {
     var updatedCategory = categoryData.UpdateCategory(category);
     return updatedCategory;
 });
 
-app.MapDelete("api/v1/categories/{id}", (ICategory categoryData, int id) =>
+app.MapDelete("api/v1/categories/{id}", (Icategory categoryData, int id) =>
 {
     categoryData.DeleteCategory(id);
     return Results.NoContent();
