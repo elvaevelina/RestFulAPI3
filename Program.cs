@@ -11,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 //Dependency injection 
-builder.Services.AddSingleton<Icategory, CategoryDal>();
-builder.Services.AddSingleton<IInstructor, InstructorDal>();
+builder.Services.AddSingleton<Icategory, CategoryADO>();
+builder.Services.AddSingleton<IInstructor, InstructorADO>();
 
 var app = builder.Build();
 
