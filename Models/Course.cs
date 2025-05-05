@@ -13,5 +13,7 @@ namespace SimpleRESTApi.Models
         public double Duration {get; set;}
 
         public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!; // Relasi ke Category
+
     }
 }

@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SimpleRESTApi.Data;
 using SimpleRESTApi.Models;
 
@@ -10,10 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// add ef core
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 //Dependency injection 
-builder.Services.AddSingleton<Icategory, CategoryADO>();
-builder.Services.AddSingleton<IInstructor, InstructorADO>();
-builder.Services.AddSingleton<ICourse, CourseADO>();
+builder.Services.AddScoped<Icategory, CategoryEF>();
+builder.Services.AddScoped<IInstructor, InstructorEF>();
+builder.Services.AddScoped<ICourse, CourseEF>();
 
 var app = builder.Build();
 
