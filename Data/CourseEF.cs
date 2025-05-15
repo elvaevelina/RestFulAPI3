@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using SimpleRESTApi.Models;
 
 namespace SimpleRESTApi.Data
@@ -19,14 +20,27 @@ namespace SimpleRESTApi.Data
         {
             try
             {
+                if(course == null)
+                {
+                    throw new ArgumentNullException(nameof(course), "Course cannot be null");
+                }   
                 _context.Courses.Add(course);
                 _context.SaveChanges();
                 return course;
             }
-            catch (Exception ex)
+            catch (DbUpdateException dbex)
+            {
+                throw new Exception("Error adding course", dbex);
+            }  
+            catch(System.Exception ex)
             {
                 throw new Exception("Error adding course", ex);
             }
+
+            // catch (Exception ex)
+            // {
+            //     throw new Exception("Error adding course", ex);
+            // }
         }
 
         public void DeleteCourse(int courseId)
@@ -84,43 +98,71 @@ namespace SimpleRESTApi.Data
             return course;
         }
 
-        // Get a single course with category details by ID
-        public ViewCourseWithCategory GetCourseById(int courseId)
+        public IEnumerable<Course> GetCoursesByCategoryId(int categoryId)
         {
-            var courseWithCategory = _context.Courses
-                .Where(c => c.CourseId == courseId)
-                .Select(c => new ViewCourseWithCategory
-                {
-                    CourseId = c.CourseId,
-                    CourseName = c.CourseName,
-                    CourseDescription = c.CourseDescription,
-                    Duration = c.Duration,
-                    CategoryId = c.CategoryId,
-                    CategoryName = c.Category.CategoryName // Assuming Category is properly related
-                })
-                .FirstOrDefault();
+            var courses = from c in _context.Courses.Include(c => c.Category)
+                          where c.CategoryId == categoryId
+                          orderby c.CourseId descending
+                          select c;
+            return courses;
+        
+        }
 
-            if (courseWithCategory == null)
+        public IEnumerable<Course> GetAllCourses()
+        {
+            var courses = from c in _context.Courses.Include(c => c.Category)
+                           orderby c.CourseId descending
+                           select c;
+            return courses;
+        }
+
+        public Course GetCourseByIdCourse(int courseId)
+        {
+            var course = _context.Courses.Include(c=>c.Category).
+                FirstOrDefault(c => c.CourseId == courseId);
+            if (course == null)
             {
                 throw new Exception("Course not found");
             }
-            return courseWithCategory;
+            return course;
         }
+                // Get a single course with category details by ID
+        // public ViewCourseWithCategory GetCourseById(int courseId)
+        // {
+        //     var courseWithCategory = _context.Courses
+        //         .Where(c => c.CourseId == courseId)
+        //         .Select(c => new ViewCourseWithCategory
+        //         {
+        //             CourseId = c.CourseId,
+        //             CourseName = c.CourseName,
+        //             CourseDescription = c.CourseDescription,
+        //             Duration = c.Duration,
+        //             CategoryId = c.CategoryId,
+        //             CategoryName = c.Category.CategoryName // Assuming Category is properly related
+        //         })
+        //         .FirstOrDefault();
+
+        //     if (courseWithCategory == null)
+        //     {
+        //         throw new Exception("Course not found");
+        //     }
+        //     return courseWithCategory;
+        // }
 
         // Get all courses with category details
-        public IEnumerable<ViewCourseWithCategory> GetCourses()
-        {
-            return _context.Courses
-                .Select(c => new ViewCourseWithCategory
-                {
-                    CourseId = c.CourseId,
-                    CourseName = c.CourseName,
-                    CourseDescription = c.CourseDescription,
-                    Duration = c.Duration,
-                    CategoryId = c.CategoryId,
-                    CategoryName = c.Category.CategoryName // Assuming Category is properly related
-                })
-                .ToList();
-        }
+        // public IEnumerable<ViewCourseWithCategory> GetCourses()
+        // {
+        //     return _context.Courses
+        //         .Select(c => new ViewCourseWithCategory
+        //         {
+        //             CourseId = c.CourseId,
+        //             CourseName = c.CourseName,
+        //             CourseDescription = c.CourseDescription,
+        //             Duration = c.Duration,
+        //             CategoryId = c.CategoryId,
+        //             CategoryName = c.Category.CategoryName // Assuming Category is properly related
+        //         })
+        //         .ToList();
+        // }
     }
 }

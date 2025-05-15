@@ -10,5 +10,8 @@ public class Instructor
     public string InstructorPhone { get; set; } = null!;
     public string InstructorAddress { get; set; } = null!;
     public string InstructorCity { get; set; } = null!;
+
+    public int CourseId { get; set; }
+    public IEnumerable<Course> Courses { get; set; } = new List<Course>();
     
 }

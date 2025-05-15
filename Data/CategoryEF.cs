@@ -49,13 +49,19 @@ namespace SimpleRESTApi.Data
 
         public IEnumerable<Category> GetCategories()
         {
-            var categories = _context.Categories.OrderByDescending(categories => categories.CategoryId).ToList();
+            // var categories = _context.Categories.OrderByDescending(categories => categories.CategoryId).ToList();
+            var categories = from c in _context.Categories
+                            orderby c.CategoryId descending
+                            select c;
             return categories;
         }
 
         public Category GetCategoryById(int CategoryId)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == CategoryId);
+            // var category = _context.Categories.FirstOrDefault(c => c.CategoryId == CategoryId);
+            var category = (from c in _context.Categories
+                            where c.CategoryId == CategoryId
+                            select c).FirstOrDefault();
             if (category == null)
             {
                 throw new Exception("Category not found");

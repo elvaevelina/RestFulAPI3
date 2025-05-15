@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SimpleRESTApi.Models;
 
 namespace SimpleRESTApi.Data
@@ -20,6 +21,10 @@ namespace SimpleRESTApi.Data
         {
             try
             {
+                if(instructor == null)
+                {
+                    throw new ArgumentNullException(nameof(instructor), "Instructor cannot be null");
+                }
                 _context.Instructors.Add(instructor);
                 _context.SaveChanges();
                 return instructor;
@@ -49,6 +54,14 @@ namespace SimpleRESTApi.Data
             }
         }
 
+        public IEnumerable<Instructor> GetAllInstructors()
+        {
+            var instructors = from i in _context.Instructors.Include(i => i.Courses)
+                             orderby i.InstructorId descending
+                             select i;
+            return instructors;
+        }
+
         public Instructor GetInstructorById(int instructorId)
         {
             var instructor = _context.Instructors.FirstOrDefault(i => i.InstructorId == instructorId);
@@ -61,10 +74,24 @@ namespace SimpleRESTApi.Data
 
         public IEnumerable<Instructor> GetInstructors()
         {
-            var instructors = _context.Instructors.OrderByDescending(i => i.InstructorId).ToList();
-            return instructors;
+            throw new NotImplementedException();
         }
 
+        // public IEnumerable<Instructor> GetInstructors()
+        // {
+        //     var instructors = _context.Instructors.OrderByDescending(i => i.InstructorId).ToList();
+        //     return instructors;
+        // }
+
+        public IEnumerable<Instructor> GetInstructorsByCourseId(int courseId)
+        {
+            var instructors = from i in _context.Instructors.Include(i => i.Courses)
+                              where i.Courses.Any(c => c.CourseId == courseId)
+                              orderby i.InstructorId descending
+                              select i;
+            return instructors;
+        }
+        
         public Instructor UpdateInstructor(Instructor instructor)
         {
             var existingInstructor = GetInstructorById(instructor.InstructorId);

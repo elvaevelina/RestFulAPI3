@@ -6,6 +6,6 @@ public class Category
 {
     public int CategoryId { get; set; }
     public string CategoryName { get; set; }
-    public ICollection<Course> Courses { get; set; } = new List<Course>();
+    public IEnumerable<Course> Courses { get; set; } = new List<Course>();
 
 }

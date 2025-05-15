@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SimpleRESTApi.Models
+namespace SimpleRESTApi.DTO
 {
-    public class Course
+    public class CourseAddDTO
     {
-        public int CourseId { get; set; }
         public string CourseName { get; set; } = null!;
         public string? CourseDescription { get; set; }
         public double Duration {get; set;}
 
         public int CategoryId { get; set; }
-        public Category? Category { get; set; } // Relasi ke Category
 
-        public int InstructorId { get; set; }
-        public Instructor? Instructor { get; set; } // Relasi ke Instructor
-
+        public int InstructorId { get; set; } // Relasi ke Instructor
     }
 }

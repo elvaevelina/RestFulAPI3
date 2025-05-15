@@ -78,6 +78,11 @@ namespace SimpleRESTApi.Data
             }
         }
 
+        public IEnumerable<Course> GetAllCourses()
+        {
+            throw new NotImplementedException();
+        }
+
         public ViewCourseWithCategory GetCourseById(int courseId)
         {
             using(SqlConnection conn = new SqlConnection(connStr))
@@ -117,6 +122,11 @@ namespace SimpleRESTApi.Data
                     conn.Close();
                 }
             }
+        }
+
+        public Course GetCourseByIdCourse(int courseId)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<ViewCourseWithCategory> GetCourses()
@@ -159,6 +169,11 @@ namespace SimpleRESTApi.Data
                     conn.Close();
                 }
             }
+        }
+
+        public IEnumerable<Course> GetCoursesByCategoryId(int categoryId)
+        {
+            throw new NotImplementedException();
         }
 
         public Course UpdateCourse(Course course)

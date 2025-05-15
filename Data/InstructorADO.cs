@@ -83,6 +83,11 @@ namespace SimpleRESTApi.Data
             }
         }
 
+        public IEnumerable<Instructor> GetAllInstructors()
+        {
+            throw new NotImplementedException();
+        }
+
         public Instructor GetInstructorById(int instructorId)
         {
             Instructor instructor = new();
@@ -139,6 +144,11 @@ namespace SimpleRESTApi.Data
                 conn.Close();
             }
             return instructors;
+        }
+
+        public IEnumerable<Instructor> GetInstructorsByCourseId(int courseId)
+        {
+            throw new NotImplementedException();
         }
 
         public Instructor UpdateInstructor(Instructor instructor)

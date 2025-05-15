@@ -10,4 +10,8 @@ public interface IInstructor
     Instructor AddInstructor(Instructor instructor);
     Instructor UpdateInstructor(Instructor instructor);
     void DeleteInstructor(int instructorId);
+
+
+    IEnumerable<Instructor> GetInstructorsByCourseId(int courseId);
+    IEnumerable<Instructor> GetAllInstructors();
 }
