@@ -54,12 +54,30 @@ namespace SimpleRESTApi.Data
             }
         }
 
-        public IEnumerable<Instructor> GetAllInstructors()
+        public IEnumerable<Course> GetAllCourses()
         {
-            var instructors = from i in _context.Instructors.Include(i => i.Courses)
-                             orderby i.InstructorId descending
-                             select i;
-            return instructors;
+            return _context.Courses.ToList();
+        }
+
+        // public IEnumerable<Instructor> GetAllInstructors()
+        // {
+        //     var instructors = from i in _context.Instructors.Include(i => i.Courses)
+        //                      orderby i.InstructorId descending
+        //                      select i;
+        //     return instructors;
+        // }
+
+        public Course GetCourseByInstructor(int instructorId, int courseId)
+        {
+            return _context.Courses.FirstOrDefault(c => c.InstructorId == instructorId && c.CourseId == courseId);
+           
+        }
+
+        public IEnumerable<Course> GetCoursesByInstructorId(int instructorId)
+        {
+            return _context.Courses
+            .Where(c => c.InstructorId == instructorId)
+            .ToList();
         }
 
         public Instructor GetInstructorById(int instructorId)
@@ -74,24 +92,9 @@ namespace SimpleRESTApi.Data
 
         public IEnumerable<Instructor> GetInstructors()
         {
-            throw new NotImplementedException();
-        }
+            return _context.Instructors.Include(i => i.Courses).ToList();
+        }        
 
-        // public IEnumerable<Instructor> GetInstructors()
-        // {
-        //     var instructors = _context.Instructors.OrderByDescending(i => i.InstructorId).ToList();
-        //     return instructors;
-        // }
-
-        public IEnumerable<Instructor> GetInstructorsByCourseId(int courseId)
-        {
-            var instructors = from i in _context.Instructors.Include(i => i.Courses)
-                              where i.Courses.Any(c => c.CourseId == courseId)
-                              orderby i.InstructorId descending
-                              select i;
-            return instructors;
-        }
-        
         public Instructor UpdateInstructor(Instructor instructor)
         {
             var existingInstructor = GetInstructorById(instructor.InstructorId);

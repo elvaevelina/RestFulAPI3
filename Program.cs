@@ -137,113 +137,81 @@ app.MapDelete("api/v1/instructors/{id}", (IInstructor instructorData, int id) =>
 
 app.MapGet("api/v1/courses", (ICourse courseData) =>
 {
-    List<CourseDTO> courseDTOs = new List<CourseDTO>();
     var courses = courseData.GetAllCourses();
-    foreach (var course in courses)
-    {
-        CourseDTO courseDTO = new CourseDTO()
-        {
-            CourseId = course.CourseId,
-            CourseName = course.CourseName,
-            CourseDescription = course.CourseDescription,
-            Duration = course.Duration,
-
-            Category = new CategoryDTO
-            {
-                CategoryId = course.Category.CategoryId,
-                CategoryName = course.Category.CategoryName
-            },
-
-            Instructor = new InstructorDTO
-            {
-                InstructorId = course.Instructor.InstructorId,
-                InstructorName = course.Instructor.InstructorName,
-                InstructorEmail = course.Instructor.InstructorEmail,
-                InstructorPhone = course.Instructor.InstructorPhone,
-                InstructorAddress = course.Instructor.InstructorAddress,
-                InstructorCity = course.Instructor.InstructorCity
-            }
-
-        };
-        courseDTOs.Add(courseDTO);
-    }
-    return courseDTOs;
+    var result = courses.Select(course => new {
+        CourseId = course.CourseId,
+        CourseName = course.CourseName,
+        CourseDescription = course.CourseDescription,
+        Duration = course.Duration,
+        CategoryId = course.Category?.CategoryId ?? 0,
+        CategoryName = course.Category?.CategoryName ?? "",
+        InstructorId = course.Instructor?.InstructorId ?? 0,
+        InstructorName = course.Instructor?.InstructorName ?? ""
+    }).ToList();
+    return result;
 });
 
 app.MapGet("api/v1/courses/{id}", (ICourse courseData, int id) =>
 {
-    CourseDTO courseDTO = new CourseDTO();
     var course = courseData.GetCourseByIdCourse(id);
-    if(course==null)
+    if (course == null)
     {
         return Results.NotFound();
     }
-    courseDTO.CourseId = course.CourseId;
-    courseDTO.CourseName = course.CourseName;
-    courseDTO.CourseDescription = course.CourseDescription;
-    courseDTO.Duration = course.Duration;
-
-    courseDTO.Category = new CategoryDTO
+    var result = new
     {
-        CategoryId = course.Category.CategoryId,
-        CategoryName = course.Category.CategoryName
+        CourseId = course.CourseId,
+        CourseName = course.CourseName,
+        CourseDescription = course.CourseDescription,
+        Duration = course.Duration,
+        CategoryId = course.Category?.CategoryId ?? 0,
+        CategoryName = course.Category?.CategoryName ?? "",
+        InstructorId = course.Instructor?.InstructorId ?? 0,
+        InstructorName = course.Instructor?.InstructorName ?? ""
     };
 
-    courseDTO.Instructor = new InstructorDTO
-    {
-        InstructorId = course.Instructor.InstructorId,
-        InstructorName = course.Instructor.InstructorName,
-        InstructorEmail = course.Instructor.InstructorEmail,
-        InstructorPhone = course.Instructor.InstructorPhone,
-        InstructorAddress = course.Instructor.InstructorAddress,
-        InstructorCity = course.Instructor.InstructorCity
-    };
-
-    return Results.Ok(courseDTO);
-
-    // var course = courseData.GetCourseById(id);
-    // return course;
+    return Results.Ok(result);
 });
 
 app.MapPost("api/v1/courses", (ICourse courseData, CourseAddDTO courseAddDTO) =>
 {
-   Course course = new Course()
-   {
+    Course course = new Course()
+    {
         CourseName = courseAddDTO.CourseName,
         CourseDescription = courseAddDTO.CourseDescription,
         Duration = courseAddDTO.Duration,
         CategoryId = courseAddDTO.CategoryId,
         InstructorId = courseAddDTO.InstructorId
-};
-   try
-   { 
+    };
+    try
+    { 
         var newCourse = courseData.AddCourse(course);
-        CourseDTO courseDTO = new CourseDTO()
+
+        // Query ulang agar relasi Category & Instructor terisi
+        var insertedCourse = courseData.GetCourseByIdCourse(newCourse.CourseId);
+
+        var result = new
         {
-            CourseName = newCourse.CourseName,
-            CourseDescription = newCourse.CourseDescription,
-            Duration = newCourse.Duration,
-            Category = new CategoryDTO
-            {
-                CategoryId = newCourse.CategoryId
-            },
-            Instructor = new InstructorDTO()
-            {
-                InstructorId=newCourse.InstructorId
-            }
+            CourseId = insertedCourse.CourseId,
+            CourseName = insertedCourse.CourseName,
+            CourseDescription = insertedCourse.CourseDescription,
+            Duration = insertedCourse.Duration,
+            CategoryId = insertedCourse.Category?.CategoryId ?? insertedCourse.CategoryId,
+            CategoryName = insertedCourse.Category?.CategoryName ?? "",
+            InstructorId = insertedCourse.Instructor?.InstructorId ?? insertedCourse.InstructorId ?? 0,
+            InstructorName = insertedCourse.Instructor?.InstructorName ?? ""
         };
-        return Results.Created($"/api/v1/courses/{newCourse.CourseId}", courseDTO);
-   }
-   catch (DbUpdateException dbex)
-   {
+
+        return Results.Created($"/api/v1/courses/{insertedCourse.CourseId}", result);
+    }
+    catch (DbUpdateException dbex)
+    {
         throw new Exception("Error adding course", dbex);
-   }  
-   catch(System.Exception ex)
-   {
+    }  
+    catch(System.Exception ex)
+    {
         throw new Exception("Error adding course", ex);
-   }
-    // var newCourse = courseData.AddCourse(course);
-    // return newCourse;
+    }
 });
 
 app.MapPut("api/v1/courses", (ICourse courseData, CourseUpdateDTO courseUpdateDTO) =>
@@ -260,22 +228,23 @@ app.MapPut("api/v1/courses", (ICourse courseData, CourseUpdateDTO courseUpdateDT
     try
     {
         var updatedCourse = courseData.UpdateCourse(course);
-        CourseDTO courseDTO = new CourseDTO()
+
+        // Query ulang agar relasi Category & Instructor terisi
+        var refreshedCourse = courseData.GetCourseByIdCourse(updatedCourse.CourseId);
+
+        var result = new
         {
-            CourseId = updatedCourse.CourseId,
-            CourseName = updatedCourse.CourseName,
-            CourseDescription = updatedCourse.CourseDescription,
-            Duration = updatedCourse.Duration,
-            Category = new CategoryDTO
-            {
-                CategoryId = updatedCourse.CategoryId
-            },
-            Instructor = new InstructorDTO()
-            {
-                InstructorId = updatedCourse.InstructorId
-            }
+            CourseId = refreshedCourse.CourseId,
+            CourseName = refreshedCourse.CourseName,
+            CourseDescription = refreshedCourse.CourseDescription,
+            Duration = refreshedCourse.Duration,
+            CategoryId = refreshedCourse.Category?.CategoryId ?? refreshedCourse.CategoryId,
+            CategoryName = refreshedCourse.Category?.CategoryName ?? "",
+            InstructorId = refreshedCourse.Instructor?.InstructorId ?? refreshedCourse.InstructorId ?? 0,
+            InstructorName = refreshedCourse.Instructor?.InstructorName ?? ""
         };
-        return Results.Ok(courseDTO);
+
+        return Results.Ok(result);
     }
     catch(DbUpdateException dbex)
     {
@@ -285,8 +254,6 @@ app.MapPut("api/v1/courses", (ICourse courseData, CourseUpdateDTO courseUpdateDT
     {
         throw new Exception("Error updating course", ex);
     }
-    // var updatedCourse = courseData.UpdateCourse(course);
-    // return updatedCourse;
 });
 
 app.MapDelete("api/v1/courses/{id}", (ICourse courseData, int id) =>

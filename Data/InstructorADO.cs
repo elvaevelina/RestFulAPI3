@@ -83,7 +83,17 @@ namespace SimpleRESTApi.Data
             }
         }
 
-        public IEnumerable<Instructor> GetAllInstructors()
+        public IEnumerable<Course> GetAllCourses()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Course GetCourseByInstructor(int instructorId, int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Course> GetCoursesByInstructorId(int instructorId)
         {
             throw new NotImplementedException();
         }
@@ -145,24 +155,19 @@ namespace SimpleRESTApi.Data
             }
             return instructors;
         }
-
-        public IEnumerable<Instructor> GetInstructorsByCourseId(int courseId)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Instructor UpdateInstructor(Instructor instructor)
         {
-            using(SqlConnection conn = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string strSql =@"UPDATE Instructors 
+                string strSql = @"UPDATE Instructors 
                                 SET InstructorName = @InstructorName, 
                                 InstructorEmail = @InstructorEmail, 
                                 InstructorPhone = @InstructorPhone, 
                                 InstructorAdress = @InstructorAdress, 
                                 InstructorCity = @InstructorCity
                                 WHERE InstructorId = @InstructorId";
-                SqlCommand cmd = new SqlCommand(strSql,conn);
+                SqlCommand cmd = new SqlCommand(strSql, conn);
                 try
                 {
                     cmd.Parameters.AddWithValue("@InstructorName", instructor.InstructorName);
@@ -173,13 +178,13 @@ namespace SimpleRESTApi.Data
                     cmd.Parameters.AddWithValue("@InstructorId", instructor.InstructorId);
                     conn.Open();
                     int result = cmd.ExecuteNonQuery();
-                    if(result==0)
+                    if (result == 0)
                     {
                         throw new Exception("Instructor not found");
                     }
                     return instructor;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
 

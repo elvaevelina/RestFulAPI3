@@ -110,21 +110,26 @@ namespace SimpleRESTApi.Data
 
         public IEnumerable<Course> GetAllCourses()
         {
-            var courses = from c in _context.Courses.Include(c => c.Category)
-                           orderby c.CourseId descending
-                           select c;
-            return courses;
+            var courses = _context.Courses
+                    .Include(c => c.Category)
+                    .Include(c => c.Instructor) // Tambahkan ini
+                    .OrderByDescending(c => c.CourseId)
+                    .ToList();
+                return courses;
         }
 
         public Course GetCourseByIdCourse(int courseId)
         {
-            var course = _context.Courses.Include(c=>c.Category).
-                FirstOrDefault(c => c.CourseId == courseId);
+            var course = _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.Instructor)
+                .FirstOrDefault(c => c.CourseId == courseId);
             if (course == null)
             {
                 throw new Exception("Course not found");
             }
             return course;
+        
         }
                 // Get a single course with category details by ID
         // public ViewCourseWithCategory GetCourseById(int courseId)
