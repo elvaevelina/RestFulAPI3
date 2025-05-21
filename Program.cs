@@ -21,6 +21,7 @@ builder.Services.AddScoped<Icategory, CategoryEF>();
 builder.Services.AddScoped<IInstructor, InstructorEF>();
 builder.Services.AddScoped<ICourse, CourseEF>();
 
+builder.Services.AddAutoMapper(typeof(SimpleRESTApi.Mapping.MappingProfile)); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
