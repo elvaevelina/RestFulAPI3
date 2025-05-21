@@ -137,18 +137,50 @@ app.MapDelete("api/v1/instructors/{id}", (IInstructor instructorData, int id) =>
 
 app.MapGet("api/v1/courses", (ICourse courseData) =>
 {
+    List<CourseDTO> courseDTOs = new List<CourseDTO>();
     var courses = courseData.GetAllCourses();
-    var result = courses.Select(course => new {
-        CourseId = course.CourseId,
-        CourseName = course.CourseName,
-        CourseDescription = course.CourseDescription,
-        Duration = course.Duration,
-        CategoryId = course.Category?.CategoryId ?? 0,
-        CategoryName = course.Category?.CategoryName ?? "",
-        InstructorId = course.Instructor?.InstructorId ?? 0,
-        InstructorName = course.Instructor?.InstructorName ?? ""
-    }).ToList();
-    return result;
+    foreach (var course in courses)
+    {
+        CourseDTO courseDTO = new CourseDTO
+        {
+            CourseId = course.CourseId,
+            CourseName = course.CourseName,
+            CourseDescription = course.CourseDescription,
+            Duration = course.Duration,
+            Category = course.Category != null ? new CategoryDTO
+            {
+            CategoryId = course.Category.CategoryId,
+            CategoryName = course.Category.CategoryName
+            } : null,
+            Instructor = course.Instructor != null ? new InstructorDTO
+            {
+                InstructorId = course.Instructor.InstructorId,
+                InstructorName = course.Instructor.InstructorName,
+                InstructorEmail = course.Instructor.InstructorEmail,
+                InstructorPhone = course.Instructor.InstructorPhone,
+                InstructorAddress = course.Instructor.InstructorAddress,
+                InstructorCity = course.Instructor.InstructorCity,
+                InstructorCountry = course.Instructor.InstructorCountry
+
+            } : null
+        };
+        courseDTOs.Add(courseDTO);
+    }
+    return Results.Ok(courseDTOs);
+
+    // var courses = courseData.GetAllCourses();
+    // var result = courses.Select(course => new
+    // {
+    //     CourseId = course.CourseId,
+    //     CourseName = course.CourseName,
+    //     CourseDescription = course.CourseDescription,
+    //     Duration = course.Duration,
+    //     CategoryId = course.Category?.CategoryId ?? 0,
+    //     CategoryName = course.Category?.CategoryName ?? "",
+    //     InstructorId = course.Instructor?.InstructorId ?? 0,
+    //     InstructorName = course.Instructor?.InstructorName ?? ""
+    //     Instructor
+    // }).ToList();
 });
 
 app.MapGet("api/v1/courses/{id}", (ICourse courseData, int id) =>

@@ -13,5 +13,6 @@ namespace SimpleRESTApi.DTO
         public string InstructorPhone { get; set; } = null!;
         public string InstructorAddress { get; set; } = null!;
         public string InstructorCity { get; set; } = null!;
+        public string InstructorCountry { get; set; } = null!;
     }
 }
