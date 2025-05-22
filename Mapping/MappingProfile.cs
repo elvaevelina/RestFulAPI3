@@ -9,9 +9,12 @@ namespace SimpleRESTApi.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Course, CourseDTO>();
-            CreateMap<Category, CategoryDTO>();
-            CreateMap<Instructor, InstructorDTO>();
+            CreateMap<Course, CourseDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Instructor, InstructorDTO>().ReverseMap();
+            CreateMap<Course, CourseAddDTO>().ReverseMap();
+            CreateMap<Course, CourseUpdateDTO>().ReverseMap();
+
         }
     }
 }

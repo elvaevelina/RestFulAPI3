@@ -13,6 +13,7 @@ public class Instructor
     public string InstructorCountry { get; set; } = null!;
     // public int CourseId { get; set; }
     // public IEnumerable<Course> Courses { get; set; } = new List<Course>();
-    public ICollection<Course> Courses { get; set; } = new List<Course>();
+    // public ICollection<Course> Courses { get; set; } = new List<Course>();
+    public IEnumerable<Course> Courses { get; set; } = new List<Course>();
 
 }

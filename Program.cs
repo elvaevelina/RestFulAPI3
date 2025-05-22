@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleRESTApi.Data;
@@ -136,6 +137,7 @@ app.MapDelete("api/v1/instructors/{id}", (IInstructor instructorData, int id) =>
     return Results.NoContent();
 });
 
+// course
 app.MapGet("api/v1/courses", (ICourse courseData) =>
 {
     List<CourseDTO> courseDTOs = new List<CourseDTO>();
@@ -231,7 +233,7 @@ app.MapPost("api/v1/courses", (ICourse courseData, CourseAddDTO courseAddDTO) =>
             Duration = insertedCourse.Duration,
             CategoryId = insertedCourse.Category?.CategoryId ?? insertedCourse.CategoryId,
             CategoryName = insertedCourse.Category?.CategoryName ?? "",
-            InstructorId = insertedCourse.Instructor?.InstructorId ?? insertedCourse.InstructorId ?? 0,
+            InstructorId = insertedCourse.Instructor?.InstructorId ?? insertedCourse.InstructorId,
             InstructorName = insertedCourse.Instructor?.InstructorName ?? ""
         };
 
@@ -255,9 +257,8 @@ app.MapPut("api/v1/courses", (ICourse courseData, CourseUpdateDTO courseUpdateDT
         CourseName = courseUpdateDTO.CourseName,
         CourseDescription = courseUpdateDTO.CourseDescription,
         Duration = courseUpdateDTO.Duration,
-        CategoryId = courseUpdateDTO.CategoryId,
-        InstructorId = courseUpdateDTO.InstructorId
-    };
+        CategoryId = courseUpdateDTO.CategoryId
+        };
     try
     {
         var updatedCourse = courseData.UpdateCourse(course);
@@ -273,7 +274,7 @@ app.MapPut("api/v1/courses", (ICourse courseData, CourseUpdateDTO courseUpdateDT
             Duration = refreshedCourse.Duration,
             CategoryId = refreshedCourse.Category?.CategoryId ?? refreshedCourse.CategoryId,
             CategoryName = refreshedCourse.Category?.CategoryName ?? "",
-            InstructorId = refreshedCourse.Instructor?.InstructorId ?? refreshedCourse.InstructorId ?? 0,
+            InstructorId = refreshedCourse.Instructor?.InstructorId ?? refreshedCourse.InstructorId,
             InstructorName = refreshedCourse.Instructor?.InstructorName ?? ""
         };
 
@@ -302,6 +303,81 @@ app.MapDelete("api/v1/courses/{id}", (ICourse courseData, int id) =>
     return Results.NoContent();
     // courseData.DeleteCourse(id);
     // return Results.NoContent();
+});
+
+//course with mapping
+app.MapGet("api/v1/courses/mapping", (ICourse courseData, IMapper mapper) =>
+{
+    var courses = courseData.GetAllCourses();
+    var courseDTOs = mapper.Map<List<CourseDTO>>(courses);
+    return Results.Ok(courseDTOs);
+});
+
+app.MapGet("api/v1/courses/mapping/{id}", (ICourse courseData, int id, IMapper mapper) =>
+{
+    var course = courseData.GetCourseByIdCourse(id);
+    if (course == null)
+    {
+        return Results.NotFound();
+    }
+    var courseDTO = mapper.Map<CourseDTO>(course);
+    return Results.Ok(courseDTO);
+   
+});
+
+app.MapPost("api/v1/courses/mapping", (ICourse courseData, CourseAddDTO courseAddDTO, IMapper mapper) =>
+{
+    try
+        { 
+            var course = mapper.Map<Course>(courseAddDTO);
+            var newCourse = courseData.AddCourse(course);
+            var insertedCourse = courseData.GetCourseByIdCourse(newCourse.CourseId);
+
+            var result = mapper.Map<CourseDTO>(insertedCourse);
+            return Results.Created($"/api/v1/courses/{result.CourseId}", result);
+        }
+        catch (DbUpdateException dbex)
+        {
+            throw new Exception("Error adding course", dbex);
+        }  
+        catch(System.Exception ex)
+        {
+            throw new Exception("Error adding course", ex);
+        }
+});
+
+
+app.MapPut("api/v1/courses/mapping", (ICourse courseData, CourseUpdateDTO courseDto, IMapper mapper) =>
+{
+    var existingCourse = courseData.GetCourseByIdCourse(courseDto.CourseId);
+    if (existingCourse == null)
+    {
+        return Results.NotFound();
+    }
+
+    existingCourse.CourseName = courseDto.CourseName;
+    existingCourse.CourseDescription = courseDto.CourseDescription;
+    existingCourse.Duration = courseDto.Duration;
+    existingCourse.CategoryId = courseDto.CategoryId;
+    existingCourse.InstructorId = courseDto.InstructorId;  // langsung pakai ini
+
+    var updatedCourse = courseData.UpdateCourse(existingCourse);
+    var courseDTO = mapper.Map<CourseDTO>(updatedCourse);
+    return Results.Ok(courseDTO);
+});
+
+
+app.MapDelete("api/v1/courses/mapping/{id}", (ICourse courseData, int id) =>
+{
+    try
+    {
+        courseData.DeleteCourse(id);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    return Results.NoContent();
 });
 
 app.Run();

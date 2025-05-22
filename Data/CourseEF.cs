@@ -64,7 +64,7 @@ namespace SimpleRESTApi.Data
 
         public Course UpdateCourse(Course course)
         {
-            var existingCourse = GetCourseEntityById(course.CourseId); // Get the course entity
+            var existingCourse = _context.Courses.FirstOrDefault(c => c.CourseId == course.CourseId); // Get the course entity
             if (existingCourse == null)
             {
                 throw new Exception("Course not found");
@@ -77,8 +77,8 @@ namespace SimpleRESTApi.Data
                 existingCourse.CourseDescription = course.CourseDescription;
                 existingCourse.Duration = course.Duration;
                 existingCourse.CategoryId = course.CategoryId;
+                existingCourse.InstructorId = course.InstructorId;
 
-                _context.Courses.Update(existingCourse);
                 _context.SaveChanges();
                 return existingCourse;
             }
@@ -121,14 +121,12 @@ namespace SimpleRESTApi.Data
         public Course GetCourseByIdCourse(int courseId)
         {
             var course = _context.Courses
-                .Include(c => c.Category)
-                .Include(c => c.Instructor)
-                .FirstOrDefault(c => c.CourseId == courseId);
-            if (course == null)
-            {
-                throw new Exception("Course not found");
-            }
+            .Include(c => c.Category)
+            .Include(c => c.Instructor)
+            .FirstOrDefault(c => c.CourseId == courseId);
+
             return course;
+            
         
         }
                 // Get a single course with category details by ID

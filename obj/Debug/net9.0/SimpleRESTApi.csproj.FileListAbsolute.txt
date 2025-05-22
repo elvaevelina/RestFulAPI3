@@ -166,3 +166,5 @@ D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.
 D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.0\AutoMapper.dll
+D:\Elva Kuliah\Sem 4\Desain web restfull API\tugas\SimpleRESTApi\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

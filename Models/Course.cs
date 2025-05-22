@@ -15,7 +15,7 @@ namespace SimpleRESTApi.Models
         public int CategoryId { get; set; }
         public Category? Category { get; set; } // Relasi ke Category
 
-        public int? InstructorId { get; set; }
+        public int InstructorId { get; set; }
         public Instructor? Instructor { get; set; } = null!; // Relasi ke Instructor
         
 
