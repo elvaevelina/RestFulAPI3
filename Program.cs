@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using SimpleRESTApi.Data;
 using SimpleRESTApi.DTO;
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<Icategory, CategoryEF>();
 builder.Services.AddScoped<IInstructor, InstructorEF>();
 builder.Services.AddScoped<ICourse, CourseEF>();
+builder.Services.AddScoped<IAspUser, AspUserEF>();
 
 builder.Services.AddAutoMapper(typeof(SimpleRESTApi.Mapping.MappingProfile)); 
 var app = builder.Build();
@@ -379,6 +381,107 @@ app.MapDelete("api/v1/courses/mapping/{id}", (ICourse courseData, int id) =>
     }
     return Results.NoContent();
 });
+
+app.MapGet("api/v1/cekpassword/{password}", (string password) =>
+{
+    var pass = SimpleRESTApi.Helpers.HashHelper.HashPassword(password);
+    // Implement your password checking logic here
+    return Results.Ok($"Password is valid: {pass}");
+});
+
+// register
+app.MapGet("api/v1/aspUsers", (IAspUser aspUserData) =>
+{
+    var users = aspUserData.GetAllUsers();
+    return Results.Ok(users);
+});
+
+app.MapGet("api/v1/aspUsers/{username}", (IAspUser aspUserData, string username) =>
+{
+    var user = aspUserData.GetUserByUsername(username);
+    if (user == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(user);
+});
+
+app.MapPost("api/v1/aspUsers", (IAspUser aspUserData, AspUser user) =>
+{
+    if (user == null)
+    {
+        return Results.BadRequest("User data cannot be null");
+    }
+
+    var registerDto = new RegisterDTO
+    {
+        Username = user.Username,
+        Password = user.Password,
+        Email = user.Email,
+        PhoneNumber = user.PhoneNumber,
+        Firstname = user.Firstname,
+        Lastname = user.Lastname,
+        Address = user.Address,
+        City = user.City,
+        Country = user.Country
+    };
+    var newUser = aspUserData.RegisterUser(registerDto);
+    return Results.Created($"/api/v1/aspUsers/{newUser.Username}", newUser);
+});
+
+app.MapPut("api/v1/aspUsers", (IAspUser aspUserData, AspUser user) =>
+{
+    if (user == null)
+    {
+        return Results.BadRequest("User data cannot be null");
+    }
+
+    try
+    {
+        var updatedUser = aspUserData.UpdateUser(user);
+        return Results.Ok(updatedUser);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+app.MapDelete("api/v1/aspUsers/{username}", (IAspUser aspUserData, string username) =>
+{
+    try
+    {
+        var deletedUser = aspUserData.DeleteUser(username);
+        return Results.Ok(deletedUser);
+    }
+    catch (KeyNotFoundException knfEx)
+    {
+        return Results.NotFound(knfEx.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+app.MapPost("api/v1/login", (IAspUser aspUserData, LoginDTO dto) =>
+{
+    if (dto == null)
+    {
+        return Results.BadRequest("Login data cannot be null");
+    }
+
+    bool isAuthenticated = aspUserData.Login(dto);
+
+    if (!isAuthenticated)
+    {
+        return Results.Unauthorized();
+    }
+
+    return Results.Ok(new { message = "Login successful ", username = dto.Username });
+});
+
+
 
 app.Run();
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

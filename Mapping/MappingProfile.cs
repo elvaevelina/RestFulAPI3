@@ -14,6 +14,9 @@ namespace SimpleRESTApi.Mapping
             CreateMap<Instructor, InstructorDTO>().ReverseMap();
             CreateMap<Course, CourseAddDTO>().ReverseMap();
             CreateMap<Course, CourseUpdateDTO>().ReverseMap();
+            CreateMap<AspUserDTO, AspUserDTO>().ReverseMap();
+            CreateMap<RegisterDTO, RegisterDTO>().ReverseMap();
+            CreateMap<LoginDTO, LoginDTO>().ReverseMap();
 
         }
     }
